@@ -28,7 +28,7 @@ public class TranslateService : ITranslateService
     /// <param name="text"></param>
     /// <param name="langFrom"></param>
     /// <param name="langTo"></param>
-    public List<string>? Translate(List<string> text, string langFrom, string langTo)
+    public List<string> Translate(List<string> text, string langFrom, string langTo)
     {
         var translatedText = new List<string>();
 
@@ -45,7 +45,7 @@ public class TranslateService : ITranslateService
             if(translationResult.ResponseStatus != 200)
             {
                 Console.WriteLine($"\nОШИБКА: {translationResult.TranslatedText}");
-                return null;
+                return translatedText;
             }
 
             if (!_cache.TryGetValue(textChunk, out string cacheValue))

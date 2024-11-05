@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option csharp_namespace = "TestTaskPlatform.gRPC_Service";
+option csharp_namespace = "TestTaskPlatform.gRPC_Client";
 
 package translate;
 

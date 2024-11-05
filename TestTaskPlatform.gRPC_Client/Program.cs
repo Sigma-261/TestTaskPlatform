@@ -1,20 +1,13 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
+﻿// создаем канал для обмена сообщениями с сервером
+// параметр - адрес сервера gRPC
+using Grpc.Net.Client;
 using System.Globalization;
-using TestTaskPlatform;
-using static System.Net.Mime.MediaTypeNames;
+using System.Xml.Linq;
+using TestTaskPlatform.gRPC_Client;
 
-var services = new ServiceCollection();
-
-services.AddMemoryCache();
-services.AddTransient<ITranslateService, TranslateService>();
-services.AddHttpClient();
-
-var serviceProvider = services.BuildServiceProvider();
-
-ITranslateService translateService = serviceProvider.GetRequiredService<ITranslateService>();
+using var channel = GrpcChannel.ForAddress("http://localhost:5176");
+// создаем клиент
+var client = new GrpcTranslate.GrpcTranslateClient(channel);
 
 while (true)
 {
@@ -52,14 +45,17 @@ while (true)
         Console.Write("\nВведите язык для перевода:\n");
         string langTo = Console.ReadLine();
 
-        var translatedText = translateService.Translate(text, langFrom, langTo);
+        var textRequest = new ListOfStrings();
+        textRequest.Strings.AddRange(text);
 
-        if (translatedText.Count == 0)
+        var translatedText = client.GetTranslate(new TranslateRequest { Text = textRequest, LangFrom = langFrom, LangTo = langTo });
+
+        if (translatedText == null)
             continue;
 
         Console.Write("\nПеревод:\n");
 
-        foreach (var textChunk in translatedText)
+        foreach (var textChunk in translatedText.Strings)
         {
             Console.WriteLine(textChunk);
         }
@@ -67,7 +63,7 @@ while (true)
     }
     else if (command == "info")
     {
-        Console.WriteLine(translateService.GetInfo());
+        Console.WriteLine(client.GetInfo(new Empty { }));
     }
 
 }
