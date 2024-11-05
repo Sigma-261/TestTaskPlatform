@@ -7,9 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestTaskPlatform", "TestTas
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestTaskPlatform.Console", "TestTaskPlatform.Console\TestTaskPlatform.Console.csproj", "{A1E226ED-FFAD-4E8C-B166-B4F47F2D81F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestTaskPlatform.gRPC_Service", "TestTaskPlatform.gRPC_Service\TestTaskPlatform.gRPC_Service.csproj", "{B673A4EB-79E6-4D18-9C47-4A8B4BAC8DCD}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestTaskPlatform.gRPC_Client", "TestTaskPlatform.gRPC_Client\TestTaskPlatform.gRPC_Client.csproj", "{A347330E-348A-4E99-95CF-58BF9D5AF66C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestTaskPlatform.gRPC_Service", "TestTaskPlatform.gRPC_Service\TestTaskPlatform.gRPC_Service.csproj", "{B673A4EB-79E6-4D18-9C47-4A8B4BAC8DCD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +27,6 @@ Global
 		{B673A4EB-79E6-4D18-9C47-4A8B4BAC8DCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B673A4EB-79E6-4D18-9C47-4A8B4BAC8DCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B673A4EB-79E6-4D18-9C47-4A8B4BAC8DCD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A347330E-348A-4E99-95CF-58BF9D5AF66C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A347330E-348A-4E99-95CF-58BF9D5AF66C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A347330E-348A-4E99-95CF-58BF9D5AF66C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A347330E-348A-4E99-95CF-58BF9D5AF66C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
