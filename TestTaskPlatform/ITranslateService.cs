@@ -9,7 +9,7 @@ namespace TestTaskPlatform;
 
 public interface ITranslateService
 {
-    public void Translate(List<string> text, string langFrom, string langTo);
+    public List<string>? Translate(List<string> text, string langFrom, string langTo);
 
     public string GetInfo();
 }

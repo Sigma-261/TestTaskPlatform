@@ -28,58 +28,70 @@ public class TranslateService : ITranslateService
     /// <param name="text"></param>
     /// <param name="langFrom"></param>
     /// <param name="langTo"></param>
-    public void Translate(List<string> text, string langFrom, string langTo)
+    public List<string>? Translate(List<string> text, string langFrom, string langTo)
     {
+        var translatedText = new List<string>();
 
-        string CurrentDateTime = "Hello";
-
-        if (!_cache.TryGetValue(CurrentDateTime, out string cacheValue))
+        foreach (var textChunk in text)
         {
-            cacheValue = CurrentDateTime;
+            string url = $"http://api.mymemory.translated.net/get?q={Uri.EscapeDataString(textChunk)}&langpair={langFrom}|{langTo}";
 
-            var cacheEntryOptions = new MemoryCacheEntryOptions()
-                .SetSlidingExpiration(TimeSpan.FromHours(23))
-                .SetAbsoluteExpiration(TimeSpan.FromHours(23));
+            HttpResponseMessage response = _httpClient.GetAsync(url).Result;
+            response.EnsureSuccessStatusCode();
 
-            _cache.Set(cacheValue, CurrentDateTime, cacheEntryOptions);
+            string responseJson = response.Content.ReadAsStringAsync().Result;
+            var translationResult = JsonConvert.DeserializeObject<TranslationResponse>(responseJson);
+
+            if(translationResult.ResponseStatus != 200)
+            {
+                Console.WriteLine($"\nОШИБКА: {translationResult.TranslatedText}");
+                return null;
+            }
+
+            if (!_cache.TryGetValue(textChunk, out string cacheValue))
+            {
+                cacheValue = translationResult.TranslatedText;
+
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromHours(2))
+                    .SetAbsoluteExpiration(TimeSpan.FromHours(24));
+
+                _cache.Set(textChunk, cacheValue, cacheEntryOptions);
+
+                //Сделано для того, чтобы апи не выдавала ошибки при частых запросах
+                Thread.Sleep(5000);
+            }
+
+            translatedText.Add(cacheValue);
         }
-
-        var test = cacheValue;
-
-        //foreach (var item in text)
-        //{
-        //    string CurrentDateTime = "Hello";
-
-        //    if (!_cache.TryGetValue(CurrentDateTime, out string cacheValue))
-        //    {
-        //        cacheValue = CurrentDateTime;
-
-        //        var cacheEntryOptions = new MemoryCacheEntryOptions()
-        //            .SetSlidingExpiration(TimeSpan.FromHours(23));
-
-        //        _cache.Set(cacheValue, CurrentDateTime, cacheEntryOptions);
-        //    }
-
-        //    var test = cacheValue;
-
-        //    string url = $"http://api.mymemory.translated.net/get?q={Uri.EscapeDataString("Привет мир!")}&langpair={"ru"}|{"en"}";
-
-        //    HttpResponseMessage response = _httpClient.GetAsync(url).Result;
-        //    response.EnsureSuccessStatusCode();
-
-        //    //string responseJson = await response.Content.ReadAsStringAsync();
-        //    //var translationResult = JsonConvert.DeserializeObject<TranslationResponse>(responseJson);
-        //}
-
+        return translatedText;
     }
 
     public string GetInfo()
     {
         return
             """
-            Сервис: TranslateService
+
+            Сервис: http://api.mymemory.translated.net
             Тип кэша: дисковый/буферный
-            Объем: Реализация не подразумевает механизм измерения размера записей
+            Объем: реализация не подразумевает механизм измерения размера записей
             """;
+    }
+
+    private class TranslationResponse
+    {
+        [JsonProperty("responseStatus")]
+        public int ResponseStatus { get; set; }
+
+        [JsonProperty("responseData")]
+        public TranslationValue ResponseData { get; set; }
+
+        public string TranslatedText => ResponseData?.TranslatedText;
+    }
+
+    private class TranslationValue
+    {
+        [JsonProperty("translatedText")]
+        public string TranslatedText { get; set; }
     }
 }
